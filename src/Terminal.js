@@ -3,6 +3,7 @@ import {findDOMNode} from 'react-dom';
 import Xterm from 'xterm';
 import 'xterm/addons/fullscreen/fullscreen.js';
 import io from 'socket.io-client/socket.io.js';
+import url from 'url';
 
 export default class Terminal extends React.Component {
   static propTypes = {
@@ -30,7 +31,8 @@ export default class Terminal extends React.Component {
   createSocket(path) {
     const {onError, onClose, initialEmit, title} = this.props;
     const term = this.term;
-    const socket = io({path, reconnection: false, forceNew: true});
+    const {pathname, query} = url.parse(path, true);
+    const socket = io({path: pathname, query, reconnection: false, forceNew: true});
     this.isChange = false;
     socket.on('connect', () => {
       socket.emit(initialEmit[0], initialEmit[1]);
